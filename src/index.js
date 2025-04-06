@@ -15,7 +15,7 @@ let users;
 app.use(express.json());
 
 app.get('/', (req, res) => {
-    res.send('Hello World!');
+    res.send('Hello World! Lalala');
 })
 
 app.get('/users', async (req, res) => {
