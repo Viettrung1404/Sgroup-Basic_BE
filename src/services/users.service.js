@@ -1,44 +1,68 @@
-import * as mockData from '../database/users.database.js';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const path = join(__dirname, '../../data.json');
-
+import { ObjectId } from 'mongodb';
+import { getDB } from '../config/db.config.js';
 
 export const getAllUsers = async () => {
-    return await mockData.readFileData(path);
-}
+  try {
+    const db = await getDB();
+    return await db.collection('users').find({}).toArray();
+  } catch (error) {
+    console.error('Error getting all users:', error);
+    throw new Error('Failed to get users');
+  }
+};
 
 export const getUserById = async (id) => {
-    const users = await mockData.readFileData(path);
-    return users.find((user) => user.id === Number(id));
-}
+  try {
+    const db = await getDB();
+    return await db.collection('users').findOne({ _id: new ObjectId(id) });
+  } catch (error) {
+    console.error(`Error getting user ${id}:`, error);
+    throw new Error('Invalid user ID or user not found');
+  }
+};
 
-export const createUser = async (name) => {
-    const users = await mockData.readFileData(path);
-    const lastUser = users[users.length - 1]; // Id của user sẽ tăng dần nên id của user mới sẽ là id của user cuối cùng + 1
-    const newUser = { id: lastUser.id + 1, name };
-    users.push(newUser);
-    await mockData.writeFileData(path, { users });
-    return newUser;
-}
+export const createUser = async (userData) => {
+  try {
+    const db = await getDB();
+    const result = await db.collection('users').insertOne(userData);
+    return { _id: result.insertedId, ...userData };
+  } catch (error) {
+    console.error('Error creating user:', error);
+    throw new Error('Failed to create user');
+  }
+};
 
-export const updateUser = async (id, name) => {
-    const users = await mockData.readFileData(path);
-    const userIndex = users.findIndex((user) => user.id === Number(id));
-    if (userIndex === -1) return null;
-    users[userIndex].name = name;
-    await mockData.writeFileData(path, { users });
-    return users[userIndex];
-}
+export const updateUser = async (id, updateData) => {
+  try {
+    const db = await getDB();
+    const result = await db.collection('users').updateOne(
+      { _id: new ObjectId(id) },
+      { $set: updateData }
+    );
+    
+    if (result.matchedCount === 0) {
+      throw new Error('User not found');
+    }
+    
+    return { _id: id, ...updateData };
+  } catch (error) {
+    console.error(`Error updating user ${id}:`, error);
+    throw new Error(error.message || 'Failed to update user');
+  }
+};
 
 export const deleteUser = async (id) => {
-    const users = await mockData.readFileData(path);
-    const userIndex = users.findIndex((user) => user.id === Number(id));
-    if (userIndex === -1) return null;
-    const deletedUser = users.splice(userIndex, 1); // Xóa user bằng cách tìm index của nó rồi dùng lệnh splice cắt từ vị trí đó 1 phần tử
-    await mockData.writeFileData(path, { users });
-    return deletedUser[0];
-}
-
+  try {
+    const db = await getDB();
+    const result = await db.collection('users').deleteOne({ _id: new ObjectId(id) });
+    
+    if (result.deletedCount === 0) {
+      throw new Error('User not found');
+    }
+    
+    return { message: 'User deleted successfully' };
+  } catch (error) {
+    console.error(`Error deleting user ${id}:`, error);
+    throw new Error(error.message || 'Failed to delete user');
+  }
+};
