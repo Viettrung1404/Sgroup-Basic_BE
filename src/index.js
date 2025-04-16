@@ -1,4 +1,5 @@
 import express from 'express';
+
 import router from './routes/app.js';
 import errorHandler from './middlewares/errorHandler.middleware.js';
 import templateEngineConfig from './config/templateEngine.config.js';
@@ -10,9 +11,8 @@ import { connectDB, getDB } from './config/db.config.js';
 const startApp = async () => {
     const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-    const app = express();
+const app = express();
     const port = 3000;
-
     app.use(express.json());
     app.use('/', router);
 
