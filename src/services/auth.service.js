@@ -1,14 +1,16 @@
-import { ObjectId } from 'mongodb';
 import { getDB } from '../config/db.config.js';
-import AuthProvider from '../provider/auth.provider.js';
+import AuthProvider from '../providers/auth.provider.js';
+import HashProVider from '../providers/hash.provider.js';
+import UserModel from '../models/users.model.js';
 
 export const registerUser = async (userData) => {
   try {
-    const db = await getDB();
-    const user = await db.collection('users').findOne({ email: userData.email});
+    const user = await UserModel.getUserByEmail(userData.email);
+    console.log('User from DB:', user);
     if (user) {
       throw new Error('User already exists');
     }
+    userData.password = await HashProVider.generateHash(userData.password);
     const result = await db.collection('users').insertOne(userData);
     return { _id: result.insertedId, ...userData };
   } catch (error) {
@@ -20,10 +22,9 @@ export const registerUser = async (userData) => {
 
 export const loginUser = async (userData) => {
   try {
-    const db = await getDB();
-    const user = await db.collection('users').findOne({ email: userData.email, password: userData.password });
+    const user = await UserModel.getUserByEmail(userData.email);
     console.log('User from DB:', user);
-    if (!user) {
+    if (!user || !HashProVider.compareHash(userData.password, user.password)) {
       throw new Error('Invalid email or password');
     }
     const token = await AuthProvider.encodeToken(user);

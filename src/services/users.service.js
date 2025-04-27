@@ -1,10 +1,10 @@
 import { ObjectId } from 'mongodb';
 import { getDB } from '../config/db.config.js';
+import UserModel from '../models/users.model.js';
 
 export const getAllUsers = async () => {
   try {
-    const db = await getDB();
-    return await db.collection('users').find({}).toArray();
+    return await UserModel.getAllUsers();
   } catch (error) {
     console.error('Error getting all users:', error);
     throw new Error('Failed to get users');
@@ -13,8 +13,7 @@ export const getAllUsers = async () => {
 
 export const getUserById = async (id) => {
   try {
-    const db = await getDB();
-    return await db.collection('users').findOne({ _id: new ObjectId(id) });
+    return await UserModel.getUserById(id);
   } catch (error) {
     console.error(`Error getting user ${id}:`, error);
     throw new Error('Invalid user ID or user not found');
@@ -23,8 +22,10 @@ export const getUserById = async (id) => {
 
 export const createUser = async (userData) => {
   try {
-    const db = await getDB();
-    const result = await db.collection('users').insertOne(userData);
+    const result = await UserModel.createUser(userData);
+    if (!result) {
+      throw new Error('User already exists');
+    }
     return { _id: result.insertedId, ...userData };
   } catch (error) {
     console.error('Error creating user:', error);
@@ -34,13 +35,8 @@ export const createUser = async (userData) => {
 
 export const updateUser = async (id, updateData) => {
   try {
-    const db = await getDB();
-    const result = await db.collection('users').updateOne(
-      { _id: new ObjectId(id) },
-      { $set: updateData }
-    );
-    
-    if (result.matchedCount === 0) {
+    const result = await UserModel.updateUser(id, updateData);
+    if (!result) {
       throw new Error('User not found');
     }
     
@@ -53,10 +49,8 @@ export const updateUser = async (id, updateData) => {
 
 export const deleteUser = async (id) => {
   try {
-    const db = await getDB();
-    const result = await db.collection('users').deleteOne({ _id: new ObjectId(id) });
-    
-    if (result.deletedCount === 0) {
+    const result = await UserModel.deleteUser(id);
+    if (!result) {
       throw new Error('User not found');
     }
     

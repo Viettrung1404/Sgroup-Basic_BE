@@ -1,4 +1,4 @@
-import authProvider from "../provider/auth.provider.js";
+import authProvider from "../providers/auth.provider.js";
 
 export class VerifyMiddleware {
     static async validateToken(req, res, next) {
