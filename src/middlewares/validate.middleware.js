@@ -30,18 +30,17 @@ export class ValidateMiddleware {
   static validateCreateUser = async (req, res, next) => {
     try {
       const schema = Joi.object({
-        name: Joi.string()
-          .min(3)
-          .max(30)
-          .required()
-          .pattern(/^[a-zA-Z\s]+$/)
-          .messages({
-            "string.min": "Tên phải có ít nhất 3 ký tự",
-            "string.max": "Tên không quá 30 ký tự",
-            "string.pattern.base": "Tên chỉ chứa chữ cái và khoảng trắng",
-            "any.required": "Tên là bắt buộc"
-          }),
-
+        // name: Joi.string()
+        //   .min(3)
+        //   .max(30)
+        //   .required()
+        //   .pattern(/^[a-zA-Z\s]+$/)
+        //   .messages({
+        //     "string.min": "Tên phải có ít nhất 3 ký tự",
+        //     "string.max": "Tên không quá 30 ký tự",
+        //     "string.pattern.base": "Tên chỉ chứa chữ cái và khoảng trắng",
+        //     "any.required": "Tên là bắt buộc"
+        //   }),
         password: Joi.string()
           .min(8)
           .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)
