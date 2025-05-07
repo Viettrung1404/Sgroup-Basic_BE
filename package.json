@@ -19,7 +19,8 @@
     "hoi": "^0.0.1",
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
-    "mongodb": "^6.15.0"
+    "mongodb": "^6.15.0",
+    "nodemailer": "^7.0.2"
   },
   "devDependencies": {
     "@babel/cli": "^7.27.0",

@@ -9,11 +9,7 @@ const router = Router();
 router.post('/register', 
   ValidateMiddleware.validateCreateUser,
   authController.registerUser);
-
-router.get('/register', () => {
-  console.log('Hello')
-})
-
+  
 router.post('/login',
   ValidateMiddleware.validateCreateUser,
   authController.loginUser);
@@ -21,5 +17,13 @@ router.post('/login',
 router.get('/me', 
   VerifyMiddleware.validateToken,
   authController.getMe);
+
+router.post('/forgot-password',
+  ValidateMiddleware.validateEmail,
+  authController.forgotPassword);
+  
+router.post('/reset-password',
+  ValidateMiddleware.validateResetPassword,
+  authController.resetPassword);
 
 export default router;

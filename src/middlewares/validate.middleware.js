@@ -26,6 +26,67 @@ export class ValidateMiddleware {
     }
   };
 
+  static validateEmail = async (req, res, next) => {
+    try {
+      const schema = Joi.object({
+        email: Joi.string()
+          .email()
+          .required()
+          .messages({
+            "string.email": "Email không hợp lệ",
+            "any.required": "Email là bắt buộc"
+          })
+      });
+
+      await schema.validateAsync(req.body);
+      next();
+    } catch (error) {
+      const errors = error.details.map((err) => ({
+        field: err.context.key,
+        message: err.message
+      }));
+      return res.status(400).json({ errors });
+    }
+  }
+
+  static validateResetPassword = async (req, res, next) => {
+    try {
+      const schema = Joi.object({
+        email: Joi.string()
+          .email()
+          .required()
+          .messages({
+            "string.email": "Email không hợp lệ",
+            "any.required": "Email là bắt buộc"
+          }),
+        password: Joi.string()
+          .min(8)
+          .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/)
+          .required()
+          .messages({
+            "string.min": "Mật khẩu phải có ít nhất 8 ký tự",
+            "string.pattern.base":
+              "Mật khẩu phải chứa ít nhất 1 chữ hoa, 1 chữ thường và 1 số",
+            "any.required": "Mật khẩu là bắt buộc"
+          }),
+        token: Joi.string()
+          .required()
+          .messages({
+            "any.required": "Token là bắt buộc"
+          })
+      });
+
+      await schema.validateAsync(req.body);
+      next();
+    } catch (error) {
+      const errors = error.details.map((err) => ({
+        field: err.context.key,
+        message: err.message
+      }));
+      return res.status(400).json({ errors });
+    }
+  }
+
   // Validate dữ liệu khi tạo user mới
   static validateCreateUser = async (req, res, next) => {
     try {

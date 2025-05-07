@@ -46,6 +46,9 @@ class UserModel {
     async updateUser(userId, userData) {
         try {
         const db = await getDB();
+        if (userData.password) {
+            userData.password = await HashProVider.generateHash(userData.password);
+        }
         const result = await db.collection('users').updateOne(
             { _id: new ObjectId(userId) },
             { $set: userData }
@@ -56,6 +59,22 @@ class UserModel {
         throw new Error('Failed to update user');
         }
     }
+
+    async resetPassword(userId, userData) {
+        try {
+            const db = await getDB();
+            userData.password = await HashProVider.generateHash(userData.password);
+            const result = await db.collection('users').updateOne(
+                { _id: new ObjectId(userId) },
+                { $set: userData }
+            );
+            return result;
+            } catch (error) {
+            console.error('Error updating user:', error);
+            throw new Error('Failed to update user');
+        }
+    }
+
     async deleteUser(userId) {
         try {
         const db = await getDB();
