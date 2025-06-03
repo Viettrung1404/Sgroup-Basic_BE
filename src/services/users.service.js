@@ -1,5 +1,3 @@
-import { ObjectId } from 'mongodb';
-import { getDB } from '../config/db.config.js';
 import UserModel from '../models/users.model.js';
 
 export const getAllUsers = async () => {

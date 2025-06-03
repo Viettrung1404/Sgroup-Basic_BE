@@ -12,7 +12,6 @@ export const registerUser = async (userData) => {
     if (user) {
       throw new Error('User already exists');
     }
-    userData.password = await HashProvider.generateHash(userData.password);
     const result = await UserModel.createUser(userData);
     return { _id: result.insertedId, ...userData };
   } catch (error) {
@@ -31,6 +30,7 @@ export const loginUser = async (userData) => {
       throw new Error('User not found');
     }
     console.log('Pass is correct: ', await HashProvider.compareHash(userData.password, user.password));
+    console.log('Data pass: ', userData.password, ' DB pass: ', user.password);
     if (!(await HashProvider.compareHash(userData.password, user.password))) {
       throw new Error('Invalid password');
     }

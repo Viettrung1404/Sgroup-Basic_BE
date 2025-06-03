@@ -26,6 +26,8 @@ class UserModel {
             throw new Error('User already exists');
         }
         userData.password = await HashProVider.generateHash(userData.password);
+        // thêm trường role với giá trị mặc định là 'user'
+        userData.role = userData.role || 'user';
         const result = await db.collection('users').insertOne(userData);
         return { _id: result.insertedId, ...userData };
         } catch (error) {

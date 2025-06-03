@@ -1,7 +1,6 @@
 import { Router } from "express";
 import * as userController from "../controllers/users.controller.js";
 import { ValidateMiddleware } from "../middlewares/validate.middleware.js";
-import upload from "../providers/upload.provider.js";
 
 const router = Router();
 

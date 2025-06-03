@@ -1,11 +1,22 @@
 import userRouter from './users.route.js';
 import authRouter from './auth.route.js';
+import pollRouter from './polls.route.js';
+import voteRouter from './vote.route.js';
 import { Router } from 'express';
 import upload from '../providers/upload.provider.js';
+import { ValidateMiddleware } from '../middlewares/validate.middleware.js';
+import { VerifyMiddleware } from '../middlewares/verify.middleware.js';
 
 const router = Router();
 router.use('/users', userRouter);
 router.use('/auth', authRouter);
+router.use('/polls',
+  VerifyMiddleware.validateToken, 
+  pollRouter);
+router.use('/vote',
+  VerifyMiddleware.validateToken,
+  ValidateMiddleware.validateUser, 
+  voteRouter);
 
 router.post('/uploadfile', upload.single('myFile'), (req, res, next) => {
     const file = req.file
