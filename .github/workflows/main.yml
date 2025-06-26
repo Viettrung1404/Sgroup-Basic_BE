@@ -4,7 +4,7 @@ on:
     branches:
       - "main"
 env:
-  AWS_REGION: ap-south-1
+  AWS_REGION: ap-southeast-1
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
   PRIVATE_SSH_KEY: ${{ secrets.AWS_SSH_KEY }}
@@ -40,7 +40,7 @@ jobs:
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           REPOSITORY: learn-devops
           IMAGE_TAG: ${{ github.sha }}
-          AWS_DEFAULT_REGION: ap-south-1
+          AWS_DEFAULT_REGION: ap-southeast-1
           PORT: ${{ env.PORT }}
           DATABASE_URL: ${{ env.DATABASE_URL }}
         uses: appleboy/ssh-action@master
